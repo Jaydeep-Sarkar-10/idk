@@ -1,0 +1,1 @@
+export const mockUser = { name: 'Aman', verified: true, university: 'Delhi Campus', hostel: 'Hostel B', memberSince: '2025', rating: 4.8 };

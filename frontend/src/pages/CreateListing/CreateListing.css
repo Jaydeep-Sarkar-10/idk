@@ -1,0 +1,17 @@
+.create-listing { max-width: 600px; padding: var(--spacing-8) var(--spacing-4); }
+.form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: var(--spacing-6); }
+.steps-indicator { font-weight: 600; color: var(--color-text-muted); background: var(--color-bg-subtle); padding: var(--spacing-2) var(--spacing-4); border-radius: var(--radius-full); }
+.listing-form-card { padding: var(--spacing-8); }
+.listing-form { display: flex; flex-direction: column; gap: var(--spacing-6); }
+.form-step h2 { margin-bottom: var(--spacing-6); font-size: var(--font-size-2xl); color: var(--color-primary); }
+.form-group { display: flex; flex-direction: column; gap: var(--spacing-2); margin-bottom: var(--spacing-6); }
+.form-group label { font-weight: 600; color: var(--color-text-muted); font-size: var(--font-size-sm); }
+.form-input { padding: var(--spacing-3); border: 2px solid var(--color-border); border-radius: var(--radius-md); font-size: var(--font-size-base); transition: border-color 0.2s; }
+.form-input:focus { outline: none; border-color: var(--color-primary); }
+.type-toggle { display: flex; gap: var(--spacing-4); }
+.flex-1 { flex: 1; }
+.upload-area { border: 2px dashed var(--color-border); padding: var(--spacing-12); text-align: center; border-radius: var(--radius-lg); background: var(--color-bg-base); cursor: pointer; }
+.upload-area:hover { border-color: var(--color-primary); }
+.form-actions { display: flex; justify-content: space-between; padding-top: var(--spacing-6); margin-top: var(--spacing-4); }
+.border-top { border-top: 1px solid var(--color-border); }
+.ml-auto { margin-left: auto; }

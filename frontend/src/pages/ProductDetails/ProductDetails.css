@@ -1,0 +1,24 @@
+.pdetails { display: grid; grid-template-columns: 1fr 400px; gap: var(--spacing-8); padding: var(--spacing-8) var(--spacing-4); align-items: start; }
+.pdetails-gallery { overflow: hidden; border-radius: var(--radius-2xl); border: 1px solid var(--color-border); background: var(--color-bg-surface); }
+.gallery-scroll { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; scrollbar-width: none; }
+.gallery-scroll::-webkit-scrollbar { display: none; }
+.gallery-img { scroll-snap-align: center; width: 100%; object-fit: cover; aspect-ratio: 4/3; flex-shrink: 0; }
+.pdetails-info-col { display: flex; flex-direction: column; gap: var(--spacing-6); }
+.pdetails-header { display: flex; justify-content: space-between; align-items: center; }
+.pdetails-date { display: flex; align-items: center; gap: 4px; color: var(--color-text-light); font-size: var(--font-size-sm); font-weight: 500; }
+.pdetails-title { margin: 0; font-size: var(--font-size-4xl); font-weight: 800; line-height: 1.2; }
+.pdetails-price { font-size: var(--font-size-5xl); font-weight: 800; color: var(--color-primary); }
+.price-suffix { font-size: var(--font-size-xl); color: var(--color-text-muted); font-weight: 600; }
+.pdetails-deposit { background: var(--color-bg-subtle); padding: var(--spacing-2) var(--spacing-3); border-radius: var(--radius-md); font-weight: 600; color: var(--color-text-muted); display: inline-block; width: fit-content; }
+.pdetails-seller { display: flex; gap: var(--spacing-4); align-items: center; padding: var(--spacing-4); }
+.seller-avatar { width: 56px; height: 56px; background: var(--color-bg-subtle); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: var(--color-text-muted); }
+.seller-name { display: flex; align-items: center; gap: 4px; font-size: var(--font-size-lg); }
+.text-success { color: var(--color-success); }
+.seller-meta { display: flex; align-items: center; gap: 4px; color: var(--color-text-muted); font-size: var(--font-size-sm); margin-top: 4px; }
+.pdetails-desc { padding: var(--spacing-6); }
+.pdetails-desc h3 { margin-bottom: var(--spacing-3); }
+.desc-meta { margin-top: var(--spacing-4); padding-top: var(--spacing-4); border-top: 1px solid var(--color-border); font-size: var(--font-size-sm); color: var(--color-text-muted); line-height: 1.8; }
+.pdetails-actions { display: flex; gap: var(--spacing-4); position: sticky; bottom: 0; padding-top: var(--spacing-4); background: var(--color-bg-base); z-index: 10; }
+.w-full { width: 100%; flex: 1; }
+.btn-lg { padding: var(--spacing-4) var(--spacing-6); font-size: var(--font-size-lg); }
+@media (max-width: 1024px) { .pdetails { grid-template-columns: 1fr; } }
