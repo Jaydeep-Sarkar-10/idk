@@ -68,6 +68,23 @@ export const authAPI = {
     return res.json();
   },
 
+  async updateMe(token, data) {
+    const res = await fetch(`${API_BASE_URL}/me/`, {
+      method: 'PATCH',
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        'Content-Type': 'application/json'
+      },
+      credentials: 'include',
+      body: JSON.stringify(data)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw err;
+    }
+    return res.json();
+  },
+
   async refreshToken() {
     const res = await fetch(`${API_BASE_URL}/token/refresh/`, {
       method: 'POST',

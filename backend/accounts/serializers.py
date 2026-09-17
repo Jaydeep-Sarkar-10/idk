@@ -11,6 +11,16 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'username', 'email', 'mobile_number', 'date_joined')
         read_only_fields = ('id', 'date_joined')
 
+    def validate_mobile_number(self, value):
+        if not value:
+            return value
+        cleaned = re.sub(r'\D', '', value)
+        if len(cleaned) == 12 and cleaned.startswith('91'):
+            cleaned = cleaned[2:]
+        if len(cleaned) != 10:
+            raise serializers.ValidationError("Invalid Indian mobile number format.")
+        return cleaned
+
 class SignupSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     confirm_password = serializers.CharField(write_only=True, required=True)
