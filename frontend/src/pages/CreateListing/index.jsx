@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Button } from '../../components/common/Button';
+import { categories } from '../../data/categories';
 import './CreateListing.css';
 
 export default function CreateListing() {
@@ -34,11 +35,11 @@ export default function CreateListing() {
 
               <div className="form-group">
                 <label>Category</label>
-                <select className="form-input" required>
-                   <option value="">Select Category</option>
-                   <option value="Books">Books</option>
-                   <option value="Electronics">Electronics</option>
-                   <option value="Hostel">Hostel Essentials</option>
+                <select className="form-input" required defaultValue="">
+                   <option value="" disabled>Select Category</option>
+                   {categories.map((c) => (
+                     <option key={c.id} value={c.name}>{c.name}</option>
+                   ))}
                 </select>
               </div>
             </div>
