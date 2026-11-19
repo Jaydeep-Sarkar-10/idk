@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/6.1/ref/settings/
 """
 
+import os
 from pathlib import Path
 from dotenv import load_dotenv
 
@@ -23,17 +24,18 @@ load_dotenv(BASE_DIR / ".env", override=True)
 # See https://docs.djangoproject.com/en/6.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-q--3rouwvgw114$24m=)7%(&=t7vloy9156-))d+o5@gn0)v%!'
+SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-q--3rouwvgw114$24m=)7%(&=t7vloy9156-))d+o5@gn0)v%!')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = os.environ.get('DEBUG', 'True').lower() in ('true', '1', 'yes')
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = [h.strip() for h in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1,*').split(',') if h.strip()]
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    'daphne',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -45,9 +47,11 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'channels',
 
     # Local
     'accounts',
+    'chat',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +83,35 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
+ASGI_APPLICATION = 'config.asgi.application'
+
+# Cache backend (LocMemCache by default for local development, Redis cache in production)
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'sasta-olx-cache',
+    }
+}
+
+# Real-time Channel Layer Configuration
+# InMemoryChannelLayer for single-process local MVP; Redis for multi-worker production.
+CHANNEL_LAYER_BACKEND = os.environ.get('CHANNEL_LAYER_BACKEND', 'memory').lower()
+if CHANNEL_LAYER_BACKEND == 'redis':
+    REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379/0')
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                'hosts': [REDIS_URL],
+            },
+        },
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels.layers.InMemoryChannelLayer',
+        },
+    }
 
 
 # Database

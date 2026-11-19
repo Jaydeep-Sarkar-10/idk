@@ -77,7 +77,13 @@ If PowerShell does not allow activation, you can use the virtual environment's P
 
 ```powershell
 python -m pip install --upgrade pip
-pip install django djangorestframework psycopg psycopg-binary django-cors-headers djangorestframework-simplejwt python-dotenv firebase-admin
+pip install -r requirements.txt
+```
+
+Or install manually:
+
+```powershell
+pip install django djangorestframework psycopg psycopg-binary django-cors-headers djangorestframework-simplejwt python-dotenv firebase-admin channels daphne channels_redis redis
 ```
 
 ---
@@ -623,10 +629,11 @@ After cloning the repository:
 * [ ] Run Django system check
 * [ ] Create `frontend/.env`
 * [ ] Run `npm install`
-* [ ] Start Django
-* [ ] Start React
+* [ ] Start Django (`python manage.py runserver`)
+* [ ] Start React (`npm run dev`)
 * [ ] Test email/password authentication
 * [ ] Test Google authentication
+* [ ] Test real-time private messaging between two accounts
 
 ---
 
@@ -643,16 +650,111 @@ If a secret is accidentally committed to GitHub, treat it as compromised and rot
 
 ---
 
+# 23. Real-Time Private Messaging & Django Channels Setup
+
+Sasta OLX includes a fully functional, secure, real-time one-to-one private messaging system between registered students using Django Channels and WebSockets.
+
+### 23.1 Real-Time Architecture Overview
+
+* **Protocols**: REST API for conversations and message history; WebSockets (`/ws/chat/{conversation_id}/`) for real-time messaging.
+* **Authentication**: Short-lived, single-use WebSocket tickets generated via authenticated REST endpoint (`POST /api/chat/ws-ticket/`). Avoids exposing raw JWT tokens in WebSocket URLs or access logs.
+* **Persistence**: Every message is permanently recorded in PostgreSQL with foreign keys and database indexes.
+* **Authorization**: Both REST endpoints and WebSocket connections strictly enforce conversation participation (`buyer_id == user.id or seller_id == user.id`). Unauthorized connections are rejected before acceptance.
+
+### 23.2 Running the Application
+
+Because Django Channels uses Daphne as the ASGI server (configured in `INSTALLED_APPS`), `python manage.py runserver` automatically starts Daphne and serves both HTTP and WebSocket traffic:
+
+```powershell
+cd backend
+.\venv\Scripts\python.exe manage.py runserver
+```
+
+Frontend:
+```powershell
+cd frontend
+npm run dev
+```
+
+### 23.3 Channel Layer Configuration (InMemory vs Redis)
+
+By default for local development, Sasta OLX uses Django Channels `InMemoryChannelLayer`, which requires **no external dependencies or Redis service**:
+
+```env
+# backend/.env (Default for local development)
+CHANNEL_LAYER_BACKEND=memory
+```
+
+> **Important**: The in-memory channel layer runs inside a single process and is not suitable for multi-worker production deployments.
+
+#### Optional: Production Redis Configuration
+
+When deploying to a multi-worker production cluster:
+
+1. Install and start Redis (e.g. via Docker or host service):
+   ```bash
+   docker run -d -p 6379:6379 redis:alpine
+   ```
+2. Configure `backend/.env`:
+   ```env
+   CHANNEL_LAYER_BACKEND=redis
+   REDIS_URL=redis://localhost:6379/0
+   ```
+   Sasta OLX will automatically connect via `channels_redis`.
+
+### 23.4 Frontend Environment Variables
+
+Configure `frontend/.env` (optional, defaults to localhost):
+
+```env
+VITE_API_BASE_URL=http://localhost:8000
+VITE_WS_BASE_URL=ws://localhost:8000
+```
+
+### 23.5 How to Test Real-Time Messaging with Two Accounts
+
+1. Open your browser and navigate to `http://localhost:5173`.
+2. Register Account 1:
+   - Email: `student1@college.edu`
+   - Username: `StudentOne`
+   - Mobile: `9876543210`
+   - Password: `Password123!`
+3. Note Student 1's ID (visible in `/profile` or database, e.g., ID `1`).
+4. Open an **Incognito / Private Window** (or a different browser like Edge/Firefox) and navigate to `http://localhost:5173`.
+5. Register Account 2:
+   - Email: `student2@college.edu`
+   - Username: `StudentTwo`
+   - Mobile: `9876543211`
+   - Password: `Password123!`
+6. Navigate to **Chat** (`/chat`):
+   - In Account 2's chat window, click **New Chat** (+ icon in the sidebar).
+   - Enter Student 1's user ID (`1`) and click **Start Chat**.
+7. The conversation appears immediately for both students!
+8. Type a message in Student 2's window and press `Enter`.
+9. The message arrives in real-time in Student 1's window over the WebSocket connection without refreshing the page!
+
+---
+
 ## Project Status
 
 The project currently uses:
 
 ```text
 Frontend:
-React + Vite + Firebase Authentication
+React + Vite + Firebase Authentication + Lucide Icons + Real-Time WebSocket Chat
 
 Backend:
-Django + Django REST Framework
+Django + Django REST Framework + Django Channels + Daphne ASGI
+
+Database:
+PostgreSQL
+
+Real-Time:
+WebSockets + InMemoryChannelLayer (local) / channels_redis (production)
+
+Authentication:
+Email/Password + Google/Firebase + Django JWT + Cryptographic WS Ticket Auth
+```
 
 Database:
 PostgreSQL

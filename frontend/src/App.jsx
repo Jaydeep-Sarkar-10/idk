@@ -23,13 +23,13 @@ export default function App() {
             <Route path="/marketplace" element={<Marketplace />} />
             <Route path="/product/:id" element={<ProductDetails />} />
             <Route path="/sell" element={<CreateListing />} />
-            <Route path="/chat" element={<Chat />} />
             <Route path="/requests" element={<div className="container" style={{padding: '4rem 2rem'}}><h1>Requests Page</h1><p>Demo placeholder</p></div>} />
             
             <Route path="/signup" element={<Signup />} />
             <Route path="/login" element={<Login />} />
             
             <Route element={<ProtectedRoute />}>
+              <Route path="/chat" element={<Chat />} />
               <Route path="/profile" element={<Profile />} />
             </Route>
           </Routes>
